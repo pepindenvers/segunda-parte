@@ -63,9 +63,10 @@ with st.expander("Preparar Buffers"):
         if "acético" in respuesta.lower() and "acetato" in respuesta.lower():
             st.success("¡Correcto!")
             if st.button("Medir pH y Absorbancia"):
+                st.image("phmetro.png", width=200)
                 st.write("### Tabla de datos:")
                 st.table({
-                    "Solution": ["7", "8", "9", "10"],
+                    "Solución": ["7", "8", "9", "10"],
                     "pH": [6.29, 5.97, 5.68, 5.30],
                     "λHMR": [0.204, 0.270, 0.773, 0.296],
                     "λMR⁻": [0.948, 0.776, 0.969, 0.279]
