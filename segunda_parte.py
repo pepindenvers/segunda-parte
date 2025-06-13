@@ -11,13 +11,12 @@ st.video("https://www.youtube.com/watch?v=zuUvQN8KXOk")
 
 # Cargar imagen GIF como base64
 def mostrar_gif(ruta):
-    file_ = open(ruta, "rb")
-    contents = file_.read()
-    data_url = base64.b64encode(contents).decode("utf-8")
-    file_.close()
-    st.markdown(f'<img src="data:image/gif;base64,{data_url}" width="400">', unsafe_allow_html=True)
+    with open(ruta, "rb") as file_:
+        contents = file_.read()
+        data_url = base64.b64encode(contents).decode("utf-8")
+        st.markdown(f'<img src="data:image/gif;base64,{data_url}" width="400">', unsafe_allow_html=True)
 
-# Función para mostrar absorbancia
+# Función para obtener absorbancia
 def obtener_absorbancia(tipo, longitud, concentracion):
     data = {
         "acido": {
@@ -55,21 +54,26 @@ with st.expander("Preparar disoluciones básicas"):
         else:
             st.error("Datos no reconocidos. Use concentraciones: 5e-6, 1e-5, 1.5e-5 y longitudes 520 o 435 nm.")
 
-# Botón 3: Preparar buffers
+# --- Preparar Buffers ---
 with st.expander("Preparar Buffers"):
     st.write("¿Con qué preparás tu buffer?")
     respuesta = st.text_input("Escriba su respuesta:")
+
     if st.button("Verificar respuesta"):
         if "acético" in respuesta.lower() and "acetato" in respuesta.lower():
             st.success("¡Correcto!")
-            if st.button("Medir pH y Absorbancia"):
-                st.image("phmetro.png", width=200)
-                st.write("### Tabla de datos:")
-                st.table({
-                    "Solución": ["7", "8", "9", "10"],
-                    "pH": [6.29, 5.97, 5.68, 5.30],
-                    "λHMR": [0.204, 0.270, 0.773, 0.296],
-                    "λMR⁻": [0.948, 0.776, 0.969, 0.279]
-                })
+            st.session_state.mostrar_tabla = True  # Activar tabla
         else:
             st.error("Respuesta incorrecta. Intente con ácido acético y acetato de sodio.")
+            st.session_state.mostrar_tabla = False
+
+    if st.session_state.get("mostrar_tabla", False):
+        if st.button("Medir pH y Absorbancia"):
+            st.image("phmetro.png", width=200)
+            st.write("### Tabla de datos:")
+            st.table({
+                "Solución": ["7", "8", "9", "10"],
+                "pH": [6.29, 5.97, 5.68, 5.30],
+                "λHMR": [0.204, 0.270, 0.773, 0.296],
+                "λMR⁻": [0.948, 0.776, 0.969, 0.279]
+            })
